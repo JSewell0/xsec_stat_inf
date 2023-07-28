@@ -1,0 +1,44 @@
+======================= model: ['HZ+', 'WH+', 'WW'] =======================
+
+mass: 339 | num of signal events: 103.124 | μ cl = 66.647 +- 0.000
+mass: 366 | num of signal events: 100.341 | μ cl = 65.300 +- 0.000
+mass: 389 | num of signal events: 117.712 | μ cl = 51.907 +- 0.000
+mass: 418 | num of signal events: 117.928 | μ cl = 47.946 +- 0.000
+mass: 442 | num of signal events: 121.588 | μ cl = 38.423 +- 0.000
+mass: 467 | num of signal events: 112.848 | μ cl = 42.468 +- 0.000
+mass: 491 | num of signal events: 112.386 | μ cl = 36.004 +- 0.000
+mass: 517 | num of signal events: 102.991 | μ cl = 32.172 +- 0.000
+mass: 544 | num of signal events: 99.607 | μ cl = 29.124 +- 0.000
+mass: 566 | num of signal events: 90.327 | μ cl = 32.821 +- 0.000
+mass: 594 | num of signal events: 85.253 | μ cl = 28.915 +- 0.000
+mass: 615 | num of signal events: 76.983 | μ cl = 22.625 +- 0.000
+mass: 640 | num of signal events: 71.721 | μ cl = 20.534 +- 0.000
+mass: 665 | num of signal events: 63.478 | μ cl = 24.491 +- 0.000
+mass: 688 | num of signal events: 57.710 | μ cl = 19.872 +- 0.000
+mass: 714 | num of signal events: 51.098 | μ cl = 19.047 +- 0.000
+mass: 739 | num of signal events: 46.062 | μ cl = 20.809 +- 0.000
+mass: 763 | num of signal events: 41.009 | μ cl = 18.261 +- 0.000
+mass: 788 | num of signal events: 36.791 | μ cl = 15.542 +- 0.000
+mass: 814 | num of signal events: 32.681 | μ cl = 15.121 +- 0.000
+======================= model: ['HZ-', 'WH-', 'WW'] =======================
+
+mass: 339 | num of signal events: 89.554 | μ cl = 64.906 +- 0.000
+mass: 366 | num of signal events: 91.421 | μ cl = 64.210 +- 0.000
+mass: 389 | num of signal events: 106.791 | μ cl = 53.217 +- 0.000
+mass: 418 | num of signal events: 109.050 | μ cl = 53.914 +- 0.000
+mass: 442 | num of signal events: 112.062 | μ cl = 43.801 +- 0.000
+mass: 467 | num of signal events: 105.359 | μ cl = 36.865 +- 0.000
+mass: 491 | num of signal events: 105.124 | μ cl = 34.863 +- 0.000
+mass: 517 | num of signal events: 97.343 | μ cl = 35.833 +- 0.000
+mass: 544 | num of signal events: 93.913 | μ cl = 34.973 +- 0.000
+mass: 566 | num of signal events: 85.395 | μ cl = 27.782 +- 0.000
+mass: 594 | num of signal events: 80.171 | μ cl = 29.304 +- 0.000
+mass: 615 | num of signal events: 72.953 | μ cl = 21.929 +- 0.000
+mass: 640 | num of signal events: 68.668 | μ cl = 23.320 +- 0.000
+mass: 665 | num of signal events: 60.953 | μ cl = 21.994 +- 0.000
+mass: 688 | num of signal events: 54.941 | μ cl = 17.481 +- 0.000
+mass: 714 | num of signal events: 48.660 | μ cl = 19.960 +- 0.000
+mass: 739 | num of signal events: 43.856 | μ cl = 18.394 +- 0.000
+mass: 763 | num of signal events: 38.798 | μ cl = 21.117 +- 0.000
+mass: 788 | num of signal events: 34.465 | μ cl = 16.449 +- 0.000
+mass: 814 | num of signal events: 31.244 | μ cl = 15.262 +- 0.000
