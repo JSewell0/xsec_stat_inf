@@ -27,15 +27,13 @@ TSpline5* file_process(string file_name){
     vector<double> col2_data;  // Vector to store the second column data
 
     string line1;
-    int count = 0;
     while (getline(file1, line1)) {
-  
       vector<string> tokens1 = split(line1, ',');
   
         if (tokens1.size() >= 2) {
             // Convert each token to double and store in the respective arrays
-            col1_data.push_back(stod(tokens1[0]));
-            col2_data.push_back(stod(tokens1[1]));
+	  col1_data.push_back(stod(tokens1[0]));
+	  col2_data.push_back(stod(tokens1[1]));
         }
     }
 
@@ -53,7 +51,7 @@ TSpline5* file_process(string file_name){
     }
 
     TSpline5* spline1 = new TSpline5("spline1", dynamicArray1, dynamicArray2, numEntries1);
-    
+
     return spline1;
    
 }
@@ -97,7 +95,7 @@ void spline_draw(TSpline5* spline1, TString graph_title, TString x_title, TStrin
 }
 
 
-void Xsectiongraph4() {
+int main(int argc,char **argv) {
 
   //file_process(string file_name)
   TSpline5* N2N3 = file_process("N2N3.csv");
@@ -113,18 +111,19 @@ void Xsectiongraph4() {
   TSpline5* N3N1Zpos = file_process("N3,N1Z+mu.csv");
   TSpline5* N3N1Zneg = file_process("N3,N1Z-mu.csv");
 
-    spline_draw(N2N3,"N2N3","mu GEV","XSection","n2n3spline1.png");
-    spline_draw(N2C1,"N2C1","mu GEV","XSection","n2c1spline1.png");
-    spline_draw(N3C1,"N3C1","mu GEV","XSection","n3c1spline1.png");
-    spline_draw(C1C1,"C1C1","mu GEV","XSection","c1c1spline1.png");
-    spline_draw(N2N1hpos,"N2N1hpos","mu GEV","ratio","n2n1hpspline1.png");
-    spline_draw(N2N1hneg,"N2N1hneg","mu GEV","ratio","n2n1hnspline1.png");
-    spline_draw(N2N1Zpos,"N2N1Zpos","mu GEV","ratio","n2n1zpspline1.png");
-    spline_draw(N2N1Zneg,"N2N1zneg","mu GEV","ratio","n2n1znspline1.png");
-    spline_draw(N3N1hpos,"N3N1hpos","mu GEV","ratio","n3n1hpspline1.png");
-    spline_draw(N3N1hneg,"N3N1hneg","mu GEV","ratio","n3n1hnspline1.png");
-    spline_draw(N3N1Zpos,"N3N1Zpos","mu GEV","ratio","n3n1zpspline1.png");
-    spline_draw(N3N1Zneg,"N3N1Zneg","mu GEV","ratio","n3n1znspline1.png");
+
+  spline_draw(N2N3,"N2N3","mu GEV","XSection","n2n3spline1.png");
+  spline_draw(N2C1,"N2C1","mu GEV","XSection","n2c1spline1.png");
+  spline_draw(N3C1,"N3C1","mu GEV","XSection","n3c1spline1.png");
+  spline_draw(C1C1,"C1C1","mu GEV","XSection","c1c1spline1.png");
+  spline_draw(N2N1hpos,"N2N1hpos","mu GEV","ratio","n2n1hpspline1.png");
+  spline_draw(N2N1hneg,"N2N1hneg","mu GEV","ratio","n2n1hnspline1.png");
+  spline_draw(N2N1Zpos,"N2N1Zpos","mu GEV","ratio","n2n1zpspline1.png");
+  spline_draw(N2N1Zneg,"N2N1zneg","mu GEV","ratio","n2n1znspline1.png");
+  spline_draw(N3N1hpos,"N3N1hpos","mu GEV","ratio","n3n1hpspline1.png");
+  spline_draw(N3N1hneg,"N3N1hneg","mu GEV","ratio","n3n1hnspline1.png");
+  spline_draw(N3N1Zpos,"N3N1Zpos","mu GEV","ratio","n3n1zpspline1.png");
+  spline_draw(N3N1Zneg,"N3N1Zneg","mu GEV","ratio","n3n1znspline1.png");
   
   //define final state cross sections for pos and neg mu:
     int size1 = 22;
