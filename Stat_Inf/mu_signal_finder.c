@@ -18,8 +18,6 @@
 
 using namespace std;
 
-unique_ptr<TFile> trf( TFile::Open("1a_signal_templates.root", "RECREATE") );
-
 vector<vector<string>> get_rates(string file_name){
 
 	// File pointer
@@ -62,7 +60,7 @@ vector<vector<string>> get_rates(string file_name){
 }
 
 
-void file_process(TString file_name,TString sr,TString hist_file_name,TString hist_name,float xsec,string mass,TH1F* hist1){
+void file_process(TFile* trf,TString file_name,TString sr,TString hist_file_name,TString hist_name,float xsec,string mass,TH1F* hist1){
   
   TString path = "/Users/jsewell/Documents/xsec_stat_inf/Stat_Inf/";
 
@@ -89,22 +87,28 @@ void file_process(TString file_name,TString sr,TString hist_file_name,TString hi
   TString root_file_name = "TChi"+file_name+"_"+sr+"_"+Form("%.3g",nlsp_mass)+"_"+Form("%.3g",lsp_mass);
   
   trf->WriteObject(hist1,root_file_name);
-  cout<<"model: "<<file_name<<endl;
-  cout<<"sr: "<<sr<<endl;
-  cout<<"nlsp mass: "<<nlsp_mass<<endl;
-  cout<<"xsec: "<<xsec<<endl;
-  cout<<"Wrote "<<root_file_name<<"... "<<endl<<endl;
+  if(nlsp_mass > 540){
+    cout<<"model: "<<file_name<<endl;
+    cout<<"sr: "<<sr<<endl;
+    cout<<"nlsp mass: "<<nlsp_mass<<endl;
+    cout<<"xsec: "<<xsec<<endl;
+    cout<<"num entries: "<<hist1->Integral()<<endl<<endl;
+    /* cout<<"Wrote "<<root_file_name<<"... "<<endl<<endl; */
+  }
  
 }
 
 void mu_signal_finder(){
 
   float xsec;
-  TString file_name_mu;  
-  vector<vector<string>> table = get_rates("1arates.csv");
+  TString file_name_mu;
+  TFile* outfile_name  = new TFile("2b_signal_templates.root", "RECREATE");
+  
+  vector<vector<string>> table = get_rates("2brates.csv");
   vector<TString> plus_minus = {"+","-"};
-  vector<TString> file_names = {"WZ","WH","WW"};
+  vector<TString> file_names = {"HZ","WH","WW"};
   vector<TString> search_regions = {"WHSR","WSR","HSR","bVeto"};
+  int mass_index = 22;
 
   for(int i=0;i<file_names.size();i++){
     
@@ -126,9 +130,9 @@ void mu_signal_finder(){
 	  double Wbins[10] = {200,250,300,350,400,450,500,600,800,1200};
 	  double Hbins[10] = {200,250,300,350,400,450,500,600,800,1200};
 	  
-	  if(file_name == "WZ"){
+	  if(file_name == "HZ"){
 	    file_name_mu = file_name + plus_minus[n];
-	    xsec = stof(table[k][n]);
+	    xsec = stof(table[k][n+7]);
 	  }	  
 
 	  else if(file_name == "WH"){
@@ -143,12 +147,12 @@ void mu_signal_finder(){
 	  
 	  if(sr == "WHSR"){
 	    TH1F* signal_met = new TH1F("signal_met",";MET;Events",8,WHbins);
-	    file_process(file_name_mu,sr,hist_file_name,hist_name,xsec,table[k][8],signal_met);
+	    file_process(outfile_name,file_name_mu,sr,hist_file_name,hist_name,xsec,table[k][mass_index],signal_met);
 	  }
 	
 	  else{
 	    TH1F* signal_met = new TH1F("signal_met",";MET;Events",9,Hbins);
-	    file_process(file_name_mu,sr,hist_file_name,hist_name,xsec,table[k][8],signal_met);
+	    file_process(outfile_name,file_name_mu,sr,hist_file_name,hist_name,xsec,table[k][mass_index],signal_met);
 	  }
 
 	}
