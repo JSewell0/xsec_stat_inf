@@ -11,6 +11,14 @@ import ROOT as rt
 import pandas as pd
 import csv
 
+def clean_data(data):
+    temp = np.array([])
+    for entry in data:
+        if entry >= 0:
+            temp = np.append(temp,entry)
+        else:
+            temp = np.append(temp,0)
+    return temp
 
 def generate(rng):
 
@@ -18,12 +26,19 @@ def generate(rng):
     b2 = np.array([749.4,332.4,176.4,99.4,60.7,34.7,26.9,18.8,3.5])
     b3 = np.array([1244,555,311,156,93,77.1,55.8,30.2,7.5])
     b4 = np.array([88.1,48.2,25.4,15.5,12.3,7.9,9.6,6.2,0.9])
-
-    bN = np.concatenate((b1,b2,b3,b4))
+    error = np.array([5.4,3.3,1.3,1.3,1.2,0.62,1.1,1.1,46.1,32.5,13.5,9.9,6.9,4.7,3.6,3.2,1.7,61,27,20,14,10,8,7.1,4.8,2.5,9.2,6.7,4.4,3.7,3.1,2.1,2.8,2.2,0.7])
+    
+    bkg_template = np.concatenate((b1,b2,b3,b4))
     bin_locs = np.linspace(1,35,36)
-
-    data = rng.poisson(bN)
-    return bin_locs, data, bN
+    
+    # bkg_data = rng.normal(bkg_template,error)
+    # print(len(bkg_template))
+    # print(f"bkg temp \n{bkg_template}\n")
+    # print(len(bkg_data))
+    # print(f"bkg data \n{bkg_data}\n")
+    
+    data = rng.poisson(bkg_template)#clean_data(bkg_data))
+    return bin_locs, data, bkg_template
 
 def write_csv(outfile_name,data_arr):
     
@@ -51,7 +66,7 @@ def write_csv(outfile_name,data_arr):
         csvwriter = csv.writer(f)
         csvwriter.writerow(fields)
         csvwriter.writerows(rows)
-        print(f"Wrote {outfile_name}!")
+        print(f"Wrote {outfile_name}!\n")
 
 def get_masses(file_name,index):
 
@@ -89,7 +104,7 @@ def find_cl(outfile_name,file_name,model,nlsp_mass,debug=False):
        plt.show()
        return 0
     else:
-        for i in range(10):
+        for i in range(5):
             signal_yields = np.array([]) # array of signal yields found by iminuit
             for x in range(1000):
                 rng = np.random.default_rng()
@@ -97,10 +112,10 @@ def find_cl(outfile_name,file_name,model,nlsp_mass,debug=False):
                 bin_locs, data, bkg_template = generate(rng)
 
                 templates = np.array([bkg_template, signal_template])
-                truth = [bkg_template.sum(), signal_template.sum()/100]
+                truth = [bkg_template.sum(), signal_template.sum()]
 
-                c = Template(data, bin_locs, templates, method="da") # Dembinski, Abdelmotteleb
-                m = Minuit(c, *truth)
+                cost_fn = Template(data, bin_locs, templates, method="da") # Dembinski, Abdelmotteleb
+                m = Minuit(cost_fn, *truth)
                 m.fixed["x0"]=True
                 m.migrad()
                 m.hesse()
@@ -109,38 +124,41 @@ def find_cl(outfile_name,file_name,model,nlsp_mass,debug=False):
 
             avg = np.append(avg,np.sort(signal_yields)[950])
 
-            with open(outfile_name,"a") as f:
-                f.write(f"mass: {nlsp_mass} | num of signal events: {sum(signal_template):.3f} | \u03bc cl = {np.mean(avg):.3f} +- {np.std(avg):.3f}\n")
-            return [nlsp_mass,model,sum(signal_template),np.mean(avg)]
+        with open(outfile_name,"a") as f:
+            f.write(f"mass: {nlsp_mass} | num of signal events: {sum(signal_template):.3f} | \u03bc cl = {np.mean(avg):.3f} +- {np.std(avg):.3f}\n")
+        return [nlsp_mass,model,sum(signal_template),np.mean(avg)]
 
 def main():     
-    '''
-    Need to change settings when working with different scenarios e.g. 1b,1a,2b etc.
-    '''
-    ###SETTINGS###
 
-    models = [["HZ+","WH+","WW"],["HZ-","WH-","WW"]]
-    masses = get_masses("2brates.csv",23) #number is index of collum w/ mass data [index +1 from table index]
+    scenarios = ["1a","1b","2b","3b"]
+    mass_index = {"1a":9, "1b":17, "2b":17, "3b":16}
 
-    file_name = "2b_signal_templates.root"
-    outfile_name = "2b_cl_yields.txt"
-    outcsv_name = "2b_rvals.csv"
+    hz_model = [["HZ+","WH+","WW"],["HZ-","WH-","WW"]]
+    wz_model = [["WZ+","WH+","WW"],["WZ-","WH-","WW"]]
+    scenario_models = {"1a":wz_model, "1b":hz_model, "2b":hz_model, "3b":hz_model}
 
-    ###END OF SETTINGS###
-    
-    csv_arr = []
-    open(outfile_name,"w").close()
-    for model in models:
-        print(f"========== model: {model} ==========")
-        with open(outfile_name,"a") as f:
-            f.write(f"======================= model: {model} =======================\n\n")
+    for scenario in scenarios:
+        print(f"\nScenario {scenario}")
+        models = scenario_models[scenario]
+        masses = get_masses(f"{scenario}rates.csv",mass_index[scenario]) #number is index of collum w/ mass data 
 
-        for mass in masses:
-            print(f"mass: {mass}")
-            csv_arr.append(find_cl(outfile_name,file_name,model,mass))
+        file_name = f"{scenario}_signal_templates.root"
+        outfile_name = f"{scenario}_cl_yields_avg.txt"
+        outcsv_name = f"{scenario}_rvals_avg.csv"
 
-    print(f"\nWrote {outfile_name}!\n")
-    write_csv(outcsv_name,csv_arr)
+        csv_arr = []
+        open(outfile_name,"w").close()
+        for model in models:
+            print(f"========== model: {model} ==========")
+            with open(outfile_name,"a") as f:
+                f.write(f"======================= model: {model} =======================\n\n")
+
+            for mass in masses:
+                print(f"mass: {mass}")
+                csv_arr.append(find_cl(outfile_name,file_name,model,mass))
+
+        print(f"\nWrote {outfile_name}!\n")
+        write_csv(outcsv_name,csv_arr)
 
 if __name__ == "__main__":
     main()

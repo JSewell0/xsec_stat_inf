@@ -19,48 +19,29 @@
 using namespace std;
 
 vector<vector<string>> get_rates(string file_name){
+  fstream fin;
+  fin.open(file_name, ios::in);
 
-	// File pointer
-	fstream fin;
+  vector<string> row;
+  vector<vector<string>> table;
+  string word, temp;
 
-	// Open an existing file
-	fin.open(file_name, ios::in);
+  while (getline(fin,temp)) {
 
-	// Read the Data from the file
-	// as String Vector
-	vector<string> row;
-        vector<vector<string>> table;
-	string line, word, temp;
+    row.clear();
+    stringstream s(temp);
 
-	while (fin >> temp) {
+    while (getline(s, word, ',')) {
 
-		row.clear();
-
-		// read an entire row and
-		// store it in a string variable 'line'
-		getline(fin, line);
-
-		// used for breaking words
-		stringstream s(line);
-
-		// read every column data of a row and
-		// store it in a string variable, 'word'
-		while (getline(s, word, ',')) {
-
-			// add all the column data
-			// of a row to a vector
-			row.push_back(word);
-		}
-
-		// append row of data to table
-		table.push_back(row);
-
-	}
-	return table;
+	    row.push_back(word);
+    }
+    table.push_back(row);
+  }
+  return table;
 }
 
 
-void file_process(TFile* trf,TString file_name,TString sr,TString hist_file_name,TString hist_name,float xsec,string mass,TH1F* hist1){
+void file_process(TFile* trf,TString file_name,TString sr,TString hist_file_name,TString hist_name,float xsec,string mass,TH1F* hist1,bool debug = false){
   
   TString path = "/Users/jsewell/Documents/xsec_stat_inf/Stat_Inf/";
 
@@ -87,14 +68,16 @@ void file_process(TFile* trf,TString file_name,TString sr,TString hist_file_name
   TString root_file_name = "TChi"+file_name+"_"+sr+"_"+Form("%.3g",nlsp_mass)+"_"+Form("%.3g",lsp_mass);
   
   trf->WriteObject(hist1,root_file_name);
-  if(nlsp_mass > 540){
+  
+  if(debug){
     cout<<"model: "<<file_name<<endl;
     cout<<"sr: "<<sr<<endl;
     cout<<"nlsp mass: "<<nlsp_mass<<endl;
     cout<<"xsec: "<<xsec<<endl;
     cout<<"num entries: "<<hist1->Integral()<<endl<<endl;
-    /* cout<<"Wrote "<<root_file_name<<"... "<<endl<<endl; */
+    cout<<"Wrote "<<root_file_name<<"... "<<endl<<endl;
   }
+  cout<<"Wrote "<<root_file_name<<"... "<<endl<<endl;  
  
 }
 
@@ -102,47 +85,47 @@ void mu_signal_finder(){
 
   float xsec;
   TString file_name_mu;
-  TFile* outfile_name  = new TFile("2b_signal_templates.root", "RECREATE");
+  TFile* outfile_name  = new TFile("3b_signal_templates.root", "RECREATE");
   
-  vector<vector<string>> table = get_rates("2brates.csv");
+  vector<vector<string>> table = get_rates("3brates.csv");
   vector<TString> plus_minus = {"+","-"};
   vector<TString> file_names = {"HZ","WH","WW"};
   vector<TString> search_regions = {"WHSR","WSR","HSR","bVeto"};
-  int mass_index = 22;
+  int mass_index = 16;
 
   for(int i=0;i<file_names.size();i++){
     
     TString file_name = file_names[i];
     TString hist_file_name = "AllBinAccXEff_TChi"+file_name+".root";
-
+    
     for(int n=0;n<2;n++){
 
       if(file_name == "WW" && n == 1){break;}
       
       for(int j=0;j<search_regions.size();j++){
-      
+
 	TString sr = search_regions[j];
 	TString hist_name = "AccXEff_"+sr;
 
 	for(int k=1;k<table.size();k++){
-	
+
 	  double WHbins[9] = {200,250,300,350,400,450,500,600,1200};
 	  double Wbins[10] = {200,250,300,350,400,450,500,600,800,1200};
 	  double Hbins[10] = {200,250,300,350,400,450,500,600,800,1200};
 	  
 	  if(file_name == "HZ"){
 	    file_name_mu = file_name + plus_minus[n];
-	    xsec = stof(table[k][n+7]);
+	    xsec = stof(table[k][n+8]);
 	  }	  
 
 	  else if(file_name == "WH"){
 	    file_name_mu = file_name + plus_minus[n];
-	    xsec = stof(table[k][n+2]);
+	    xsec = stof(table[k][n+3]);
 	  }
 
 	  else if(file_name == "WW"){
 	    file_name_mu = file_name;
-	    xsec = stof(table[k][4]);
+	    xsec = stof(table[k][5]);
 	  }	  	  
 	  
 	  if(sr == "WHSR"){
@@ -154,7 +137,6 @@ void mu_signal_finder(){
 	    TH1F* signal_met = new TH1F("signal_met",";MET;Events",9,Hbins);
 	    file_process(outfile_name,file_name_mu,sr,hist_file_name,hist_name,xsec,table[k][mass_index],signal_met);
 	  }
-
 	}
       }
     }
